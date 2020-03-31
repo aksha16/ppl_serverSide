@@ -107,6 +107,13 @@ const functions = {
             if(err) reject(err);
             else resolve(result);
         })
+    }),
+
+    forgetPassword: (userId) => new Promise((resolve, reject) => {
+        userSchema.findOne({email:userId}, (err, result)=> {
+            if(err) reject(err);
+            else resolve(result);
+        })
     })
 };
 

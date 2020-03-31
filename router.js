@@ -2,11 +2,14 @@ const express = require("express");
 const router = express.Router();
 const api = require("./api");
 const multer = require("multer");
+const sendgrid = require('@sendgrid/mail');
+sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+
 const upload = multer({
-  dest: __dirname.split("backend")[0] + "/public/uploadPics"
+  dest: "/home/com122/Desktop/ppl/clientSide" + "/public/uploadPics"
 });
 const uploadCategory = multer({
-  dest: __dirname.split("backend")[0] + "/public/categoryPics"
+  dest: "/home/com122/Desktop/ppl/clientSide" + "/public/categoryPics"
 });
 
 router.get("/", (req, res) => {
@@ -31,16 +34,20 @@ router.post("/registration",upload.none(), async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login",upload.none(), async (req, res) => {
   try {
+    const obj = req.body;
     let user = await api.logIn(req.body.email, req.body.password);
     console.log(req.body.email, req.body.password);
     if (user) {
-      console.log("user can log in");
-      res.send(true);
+      obj.status = true;
+      console.log(user,"user can log in");
+      res.send(obj);
     } else {
-      console.log("user can't log-in");
-      res.send(false);
+      obj.status = false;
+      console.log(obj, "user can't log-in");
+
+      res.send(obj);
     }
   } catch (err) {
     console.log("errror : ", err);
@@ -49,13 +56,13 @@ router.post("/login", async (req, res) => {
 
 router.post("/login/upload", upload.single("image"), async (req, res) => {
   let obj = req.body;
-  console.log("req.dataaaaa", req.file);
+  //console.log("req.dataaaaa", req.file);
   obj.image = req.file.filename;
   obj.category = req.body.category.toLowerCase();
   console.log("obj", obj);
   res.send(obj);
   await api.createUpload(obj);
-  console.log("upload dbase has been created ...");
+  console.log("upload dbase has been created ...", __dirname);
 });
 
 router.post("/login/post", async (req, res) => {
@@ -139,6 +146,30 @@ router.post('/login/singlePost/addComments', async (req, res) => {
   console.log("comment came :", obj);
   let data = await api.addComments(obj._id, obj.comment);
   res.send(obj.comment);
+
+});
+
+router.post('/forgetpassword',upload.none(), async (req, res) => {
+  const data = await api.forgetPassword(req.body.email);
+  console.log("forget pass", req.body, data);
+  if(data){
+    const obj = {_id:data._id, status:true}
+    const emailText='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><a href="http://localhost:3000/resetpassword">Click Here to reset the password</a></body></html>'
+  const msg = {
+    to: req.body.email,
+    from: 'aksha.ali@daffodilsw.com',
+    subject: 'Reset password of PetSocial account',
+    text: 'You can reset your password',
+    html: emailText,
+  };
+  sendgrid.send(msg);
+  res.send(obj);
+  }
+  else {
+    const obj = {status:false};
+    res.send(obj);
+  }
+
 
 })
 
