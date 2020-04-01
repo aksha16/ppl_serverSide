@@ -102,15 +102,22 @@ const functions = {
         } )
     } ),
 
-    addComments : (userId, userComment) => new Promise((resolve, reject) => {
-        userUpload.updateOne({_id:userId}, {$push:{comments:userComment}}, (err, result)=> {
+    addComments : (userId, userComment, userEmail) => new Promise((resolve, reject) => {
+        userUpload.updateOne({_id:userId}, {$push:{comments:{commentedBy:userEmail,comment:userComment}}}, (err, result)=> {
             if(err) reject(err);
             else resolve(result);
         })
     }),
 
-    forgetPassword: (userId) => new Promise((resolve, reject) => {
-        userSchema.findOne({email:userId}, (err, result)=> {
+    forgetPassword: (userEmail) => new Promise((resolve, reject) => {
+        userSchema.findOne({email:userEmail}, (err, result)=> {
+            if(err) reject(err);
+            else resolve(result);
+        })
+    }),
+
+    resetPassword: (userId, userNewPassword) => new Promise((resolve, reject) => {
+        userSchema.updateOne({_id:userId}, {$set:{password:userNewPassword}}, (err, result)=>{
             if(err) reject(err);
             else resolve(result);
         })

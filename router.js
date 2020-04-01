@@ -144,8 +144,10 @@ router.post('/login/singlePost', async (req, res) => {
 router.post('/login/singlePost/addComments', async (req, res) => {
   let obj = req.body;
   console.log("comment came :", obj);
-  let data = await api.addComments(obj._id, obj.comment);
-  res.send(obj.comment);
+  let data = await api.addComments(obj._id, obj.comment, obj.email);
+  console.log("whats has commented returned", data);
+  const sendData = {commentedBy:obj.email, comment:obj.comment};
+  res.send(sendData);
 
 });
 
@@ -154,7 +156,7 @@ router.post('/forgetpassword',upload.none(), async (req, res) => {
   console.log("forget pass", req.body, data);
   if(data){
     const obj = {_id:data._id, status:true}
-    const emailText='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><a href="http://localhost:3000/resetpassword">Click Here to reset the password</a></body></html>'
+    const emailText=`<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><a href="http://localhost:3000/resetpassword/${data._id}">Click Here to reset the password</a></body></html>`
   const msg = {
     to: req.body.email,
     from: 'aksha.ali@daffodilsw.com',
@@ -169,8 +171,12 @@ router.post('/forgetpassword',upload.none(), async (req, res) => {
     const obj = {status:false};
     res.send(obj);
   }
+});
 
-
+router.post('/resetpassword', async(req, res) => {
+  console.log("backend data", req.body);
+  const data = await api.resetPassword(req.body._id, req.body.password);
+  res.send(data);
 })
 
 module.exports = router;

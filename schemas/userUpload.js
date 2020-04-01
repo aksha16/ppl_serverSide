@@ -8,7 +8,7 @@ const userUpload = mongoose.Schema({
     date : String,
     time : String,
     likedBy:Array,
-    comments:Array
+    comments:[{commentedBy:String, comment:String}]
 
 },
 {version : false}
