@@ -5,6 +5,10 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const router = require('./router');
 
+const routerSignUp = require('./routers/registrationLoginPassword');
+const routerForPost = require('./routers/post');
+const routerforCtaegory = require('./routers/category');
+
 // passport and cookie-session has been installed !
 
 const port = 3002;
@@ -24,6 +28,9 @@ mongoose.connect('mongodb://localhost:27017/ppldata', {
 
 app.use('/user', router);
 
+app.use('/sign', routerSignUp);
+app.use('/posting', routerForPost);
+app.use('categoring', routerforCtaegory);
 
 app.listen(port, (req, res) => {
     console.log("connected to server !!");

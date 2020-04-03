@@ -5,6 +5,7 @@ const multer = require("multer");
 const sendgrid = require('@sendgrid/mail');
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
+
 const upload = multer({
   dest: "/home/com122/Desktop/ppl/clientSide" + "/public/uploadPics"
 });
@@ -16,7 +17,7 @@ router.get("/", (req, res) => {
   res.send("done!");
 });
 
-router.post("/registration",upload.none(), async (req, res) => {
+router.post("/registration",multer().none(), async (req, res) => {
   try {
     let user = await api.findByEmail(req.body.email);
     console.log(req.body.email);
@@ -26,13 +27,29 @@ router.post("/registration",upload.none(), async (req, res) => {
       res.send(true);
     } else {
       console.log("new user created : ", req.body);
-      await api.createDb(req.body);
-      res.send(false);
+      const data = await api.createDb(req.body);
+      console.log("what's has come out of registration", data);
+      const obj = {_id:data._id, status:true}
+      const emailText=`<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><a href="http://localhost:3000/verifyuser/${data._id}">Click Here to reset the password</a></body></html>`
+      const msg = {
+      to: req.body.email,
+      from: 'aksha.ali@daffodilsw.com',
+      subject: 'Reset password of PetSocial account',
+      text: 'You can reset your password',
+      html: emailText,
+  };
+  sendgrid.send(msg);
+  res.send(false);
     }
   } catch (err) {
     console.log("error", err);
   }
 });
+
+router.post('/verifyuser', async (req, res) => {
+  await api.verifyUser(req.body._id);
+})
+
 
 router.post("/login",upload.none(), async (req, res) => {
   try {
@@ -71,18 +88,6 @@ router.post("/login/post", async (req, res) => {
   res.send(data);
 });
 
-var cate = {};
-router.post("/login/category7", (req, res) => {
-  res.send(req.body);
-  console.log("req.data", req.body);
-  if (req.body != {}) {
-    cate = req.body;
-  }
-});
-
-router.post("/login/showCategory7", (req, res) => {
-  res.send(cate);
-});
 
 router.post("/login/likes", async (req, res) => {
   console.log("likes response : ", req.body);

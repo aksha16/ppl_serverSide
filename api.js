@@ -19,7 +19,7 @@ const functions = {
     createDb : (dataBody) => userSchema.create(dataBody),
 
     logIn : (userEmail, userPassword) => new Promise((resolve, reject) => {
-        userSchema.findOne({$and: [{email:userEmail}, {password:userPassword}]}, (err, result) => {
+        userSchema.findOne({$and: [{email:userEmail}, {password:userPassword}, {isVerified:true}]}, (err, result) => {
             if(err) reject(err)
             else {
                 console.log("result of login checking :", result);
@@ -118,6 +118,13 @@ const functions = {
 
     resetPassword: (userId, userNewPassword) => new Promise((resolve, reject) => {
         userSchema.updateOne({_id:userId}, {$set:{password:userNewPassword}}, (err, result)=>{
+            if(err) reject(err);
+            else resolve(result);
+        })
+    }),
+
+    verifyUser: (userId) => new Promise((resolve, reject) => {
+        userSchema.updateOne({_id:userId}, {$set:{isVerified:true}}, (err, result) => {
             if(err) reject(err);
             else resolve(result);
         })
