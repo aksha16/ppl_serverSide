@@ -19,7 +19,7 @@ const functions = {
     }),
 
     findByCategory : (userCategory) => new Promise((resolve, reject) => {
-        categorySchema.findOne({category:userCategory}, (err, result) => {
+        categorySchema.findOne({name:userCategory}, (err, result) => {
             if(err) reject(err);
             else resolve(result);
         })

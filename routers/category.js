@@ -7,7 +7,11 @@ const uploadCategory = multer({
   dest: "/home/com122/Desktop/ppl/clientSide" + "/public/categoryPics"
 });
 
-///login/categoryupload
+router.get("/", (req, res) => {
+  res.send("done!");
+});
+
+///login/categoryUpload
 router.post(
     "/categoryUpload",
     uploadCategory.single("image"),
@@ -16,8 +20,8 @@ router.post(
         console.log("is this running ..?");
       let obj = req.body;
       obj.image = req.file.filename;
-      obj.category = obj.category.toLowerCase();
-      let yes = await api.findByCategory(req.body.category);
+      obj.name = obj.name.toLowerCase();
+      let yes = await api.findByCategory(req.body.name);
       if(yes) {
         obj.status = true
           console.log("category present ");
@@ -45,3 +49,5 @@ router.post(
     //console.log("category has been sent", data);
     res.send(data);
   });
+
+  module.exports = router;

@@ -28,7 +28,7 @@ const upload = multer({
   
   
   // login/likes
-  router.post("/post/likes", async (req, res) => {
+  router.post("/likes", async (req, res) => {
     console.log("likes response : ", req.body);
     const data = await api.addLikes(req.body._id, req.body.email);
     console.log("likes are added !!");
@@ -41,6 +41,24 @@ const upload = multer({
     let data = await api.addProfile(req.body.email);
     console.log("profile is been sent", req.body.email);
     res.send(data);
+  });
+
+  //login/singlepost
+  router.post('/singlePost', async (req, res) => {
+    console.log("let's check single post data ", req.body)
+    let data = await api.showSinglePost(req.body.id);
+    res.send(data);
+  });
+  
+  //login/signlePost/addComments
+  router.post('/singlePost/addComments', async (req, res) => {
+    let obj = req.body;
+    console.log("comment came :", obj);
+    let data = await api.addComments(obj._id, obj.comment, obj.email);
+    console.log("whats has commented returned", data);
+    const sendData = {commentedBy:obj.email, comment:obj.comment};
+    res.send(sendData);
+  
   });
   
 
