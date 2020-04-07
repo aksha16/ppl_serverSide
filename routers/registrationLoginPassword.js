@@ -4,6 +4,7 @@ const api = require("../apis/registrationLogin");
 const multer = require("multer");
 const sendgrid = require('@sendgrid/mail');
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+const jwt = require('jsonwebtoken');
 
 router.post("/registration",multer().none(), async (req, res) => {
     try {
@@ -38,11 +39,26 @@ router.post("/registration",multer().none(), async (req, res) => {
     await api.verifyUser(req.body._id);
   });
 
-  router.post("/login",multer().none(), async (req, res) => {
+  const verifyToken = (req, res, next) => {
+    console.log("what happended with jwt", req.headers, req.body);
+    jwt.verify(req.body.token, 'secret_key', (err, authData) => {
+      if(err){
+        console.log('err', err);
+      }
+      else {
+        console.log("authdata", authData);
+        next();
+      }
+    })
+
+  }
+
+  router.post("/login",multer().none(),verifyToken, async (req, res) => {
     try {
+      console.log("what happened with jwt", req.body);
       const obj = req.body;
       let user = await api.logIn(req.body.email, req.body.password);
-      console.log(req.body.email, req.body.password);
+      //console.log(req.body.email, req.body.password);
       if (user) {
         obj.status = true;
         console.log(user,"user can log in");
@@ -53,11 +69,20 @@ router.post("/registration",multer().none(), async (req, res) => {
   
         res.send(obj);
       }
+      
     } catch (err) {
       console.log("errror : ", err);
     }
   });
 
+  router.post('/jwt',multer().none() ,async(req, res)=> {
+    const user = {username:req.body.email};
+    jwt.sign({user},'secret_key', (err, token) => {
+      console.log("token lets see ", token);
+      res.json({token});
+    } )
+  });
+ 
   router.post('/forgetpassword',multer().none(), async (req, res) => {
     const data = await api.forgetPassword(req.body.email);
     console.log("forget pass", req.body, data);

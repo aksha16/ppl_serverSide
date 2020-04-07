@@ -20,7 +20,7 @@ const functions = {
     createDb : (dataBody) => userSchema.create(dataBody),
 
     logIn : (userEmail, userPassword) => new Promise((resolve, reject) => {
-        userSchema.findOne({$and: [{email:userEmail}, {password:userPassword}]}, (err, result) => {
+        userSchema.findOne({$and: [{email:userEmail}, {password:userPassword},{isVerified:true}]}, (err, result) => {
             if(err) reject(err)
             else {
                 console.log("result of login checking :", result);
