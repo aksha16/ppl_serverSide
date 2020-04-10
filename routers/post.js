@@ -35,13 +35,6 @@ const upload = multer({
     res.send(data);
   });
   
-  // login/profile
-  router.post("/profile", async (req, res) => {
-    console.log("achha ", req.body);
-    let data = await api.addProfile(req.body.email);
-    console.log("profile is been sent", req.body.email);
-    res.send(data);
-  });
 
   //login/singlepost
   router.post('/singlePost', async (req, res) => {

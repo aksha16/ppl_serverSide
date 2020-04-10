@@ -13,7 +13,7 @@ const routerForCategory = require('./routers/category');
 // passport and cookie-session has been installed !
 
 const port = 3002;
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -30,7 +30,7 @@ mongoose.connect('mongodb://localhost:27017/ppldata', {
 //app.use('/user', router);
 
 
-app.use('/sign', routerForSignUp);
+app.use('/user', routerForSignUp);
 app.use('/posting', routerForPost);
 app.use('/categoring', routerForCategory);
 

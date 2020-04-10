@@ -7,17 +7,6 @@ const postSchema = require('../schemas/postSchema');
 const functions = {
     createUpload : (dataBody) => postSchema.create(dataBody),
     
-    addProfile : (userEmail) => new Promise((resolve, reject) => {
-        userSchema.find({email:userEmail}, (err, result) => {
-            if(err){
-                reject(err)
-            }
-            else {
-                resolve(result)
-            }
-        })
-    }),
-    
     showPost : () => new Promise((resolve, reject) => {
         postSchema.find({}, (err, result) => {
             if(err) {

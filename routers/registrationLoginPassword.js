@@ -53,16 +53,32 @@ router.post("/registration",multer().none(), async (req, res) => {
 
   }
 
-  router.post("/login",multer().none(),verifyToken, async (req, res) => {
+  router.post("/login",multer().none(), async (req, res) => {
     try {
-      console.log("what happened with jwt", req.body);
-      const obj = req.body;
+      //console.log("what happened with jwt", req.body);
+      const obj = {};
       let user = await api.logIn(req.body.email, req.body.password);
       //console.log(req.body.email, req.body.password);
       if (user) {
-        obj.status = true;
-        console.log(user,"user can log in");
-        res.send(obj);
+        console.log("userrrrr++++", {...user})
+        const userObj = {...user}._doc;
+        userObj.status = true;
+        delete userObj.password;
+        console.log(userObj,"user can log in");
+        //jwt here
+        const payload = {userData:userObj};
+        jwt.sign({payload},'secret_key', (err, token) => {
+          if (err) console.log("jwt err", err);
+          else {
+            //userObj["token"] = token;
+            //userObj.password="it shouldn't be seen !!!";
+            console.log("token lets see ", token, "^^", userObj);
+          res.send({token});
+        }
+        } );
+       // user.password="it shouldn't be seen !!!";
+       // console.log(user, "does it work after jwt")
+       // res.send(user);
       } else {
         obj.status = false;
         console.log(obj, "user can't log-in");
@@ -75,12 +91,17 @@ router.post("/registration",multer().none(), async (req, res) => {
     }
   });
 
-  router.post('/jwt',multer().none() ,async(req, res)=> {
-    const user = {username:req.body.email};
-    jwt.sign({user},'secret_key', (err, token) => {
-      console.log("token lets see ", token);
-      res.json({token});
-    } )
+  router.post('/jwtverify',multer().none() ,(req, res)=> {
+    console.log("res.body jwt verifaction", req.body);
+    jwt.verify(req.body.token, 'secret_key', (err, authData) => {
+      if(err){
+        console.log('err', err);
+      }
+      else {
+        console.log("authdata", authData);
+        res.json(authData);
+      }
+    })
   });
  
   router.post('/forgetpassword',multer().none(), async (req, res) => {
