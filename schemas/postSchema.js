@@ -1,17 +1,24 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const userSchema = require("./userSchema");
 
-const now = new Date();
-const postSchema = mongoose.Schema({
-    postedBy : String,
-    image : String,
-    caption : String,
-    category : String,
-    date : {type:Date, default:Date.now},
-    likedBy:Array,
-    comments:[{commentedBy:String, comment:String}]
-
-},
-{version : false}
+const postSchema = mongoose.Schema(
+  {
+    postedBy: String,
+    image: String,
+    caption: String,
+    category: String,
+    date: { type: Date, default: Date.now },
+    likedBy: Array,
+    comments: [
+      {
+        comment: String,
+        commentedBy: { type: mongoose.Schema.Types.ObjectId, ref: userSchema }
+      }
+    ]
+  },
+  { version: false }
 );
 
-module.exports = mongoose.model('postSchema', postSchema);
+
+
+module.exports = mongoose.model("postSchema", postSchema);
