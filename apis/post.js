@@ -9,14 +9,16 @@ const functions = {
   showPost: () =>
     new Promise((resolve, reject) => {
       postSchema
-        .find({}, (err, result) => {
+        .find({}).sort({ _id: -1 })
+        .populate("postedBy")
+        .exec((err, result) => {
           if (err) {
             reject(err);
           } else {
             resolve(result);
           }
         })
-        .sort({ _id: -1 });
+        ;
     }),
 
   addLikes: (id, email) =>
@@ -53,24 +55,31 @@ const functions = {
   showSinglePost: userId =>
     new Promise((resolve, reject) => {
       console.log("single post working ????");
-      postSchema.findOne({ _id: userId }, (err, result) => {
-        if (err) reject(err);
-        else resolve(result);
-      });
+      postSchema
+        .findOne({ _id: userId })
+        .populate("comments.commentedBy")
+        .populate("postedBy")
+        .exec((err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        });
     }),
 
   addComments: (postId, userComment, userId) =>
     new Promise((resolve, reject) => {
-      postSchema.findOneAndUpdate(
-        { _id: postId },
-        {
-          $push: { comments: { comment: userComment, commentedBy: userId } }
-        }).populate("comments.commentedBy").exec(
-        (err, result) => {
+      postSchema
+        .findOneAndUpdate(
+          { _id: postId },
+          {
+            $push: { comments: { comment: userComment, commentedBy: userId } }
+          }
+        )
+        .populate("comments.commentedBy")
+        .populate("postedBy")
+        .exec((err, result) => {
           if (err) reject(err);
           else resolve(result);
-        })
-      
+        });
     })
 };
 

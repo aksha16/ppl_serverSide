@@ -47,9 +47,17 @@ router.post("/singlePost/addComments", async (req, res) => {
     let obj = req.body;
     console.log("comment came :", obj);
     let data = await api.addComments(obj._id, obj.comment, obj.commentedBy);
-    console.log("whats has commented returned", data.comments[0].commentedBy, "============================");
-    const sendData = { commentedBy: obj.commentedBy, comment: obj.comment };
-    res.send(data.comments.slice(-1));
+    console.log(
+      "whats has commented returned",
+      data.comments,
+      "============================"
+    );
+    const sendData = {
+      commentedBy:
+        data.comments.slice(-1)[0].commentedBy,
+      comment: obj.comment
+    };
+    res.send(sendData);
   } catch (err) {
     console.log("errrrrr", err);
   }

@@ -3,7 +3,7 @@ const userSchema = require("./userSchema");
 
 const postSchema = mongoose.Schema(
   {
-    postedBy: String,
+    postedBy: { type: mongoose.Schema.Types.ObjectId, ref: userSchema },
     image: String,
     caption: String,
     category: String,
@@ -18,7 +18,5 @@ const postSchema = mongoose.Schema(
   },
   { version: false }
 );
-
-
 
 module.exports = mongoose.model("postSchema", postSchema);
