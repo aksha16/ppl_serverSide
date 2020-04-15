@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const routerForSignUp = require('./routers/userouter');
+const routerForUser = require('./routers/userouter');
 const routerForPost = require('./routers/postRouter');
 const routerForCategory = require('./routers/categoryRouter');
 
@@ -25,7 +25,7 @@ mongoose.connect('mongodb://localhost:27017/ppldata', {
     else console.log("dbase Connected ! ")
 });
 
-app.use('/user', routerForSignUp);
+app.use('/user', routerForUser);
 app.use('/post', routerForPost);
 app.use('/category', routerForCategory);
 
