@@ -4,11 +4,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-// const router = require('./router');
-
-const routerForSignUp = require('./routers/registrationLoginPassword');
-const routerForPost = require('./routers/post');
-const routerForCategory = require('./routers/category');
+const routerForSignUp = require('./routers/userouter');
+const routerForPost = require('./routers/postRouter');
+const routerForCategory = require('./routers/categoryRouter');
 
 // passport and cookie-session has been installed !
 
@@ -27,12 +25,9 @@ mongoose.connect('mongodb://localhost:27017/ppldata', {
     else console.log("dbase Connected ! ")
 });
 
-//app.use('/user', router);
-
-
 app.use('/user', routerForSignUp);
-app.use('/posting', routerForPost);
-app.use('/categoring', routerForCategory);
+app.use('/post', routerForPost);
+app.use('/category', routerForCategory);
 
 app.listen(port, (req, res) => {
     console.log("connected to server !!");

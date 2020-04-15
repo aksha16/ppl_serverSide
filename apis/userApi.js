@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const userSchema = require('../schemas/userSchema');
 
-//this file doesn't need any change , all's okay !!!
-
 const functions = {
 
     findByEmail : (userEmail) => new Promise((resolve, reject) => {

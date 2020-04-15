@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const postSchema = require("../schemas/postSchema");
 
-// no chnages now !!
 
 const functions = {
   createUpload: dataBody => postSchema.create(dataBody),
@@ -9,7 +8,8 @@ const functions = {
   showPost: () =>
     new Promise((resolve, reject) => {
       postSchema
-        .find({}).sort({ _id: -1 })
+        .find({})
+        .sort({ _id: -1 })
         .populate("postedBy")
         .exec((err, result) => {
           if (err) {
@@ -17,8 +17,7 @@ const functions = {
           } else {
             resolve(result);
           }
-        })
-        ;
+        });
     }),
 
   addLikes: (id, email) =>
