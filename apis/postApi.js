@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const postSchema = require("../schemas/postSchema");
 
-
 const functions = {
   createUpload: dataBody => postSchema.create(dataBody),
 
@@ -71,13 +70,17 @@ const functions = {
           { _id: postId },
           {
             $push: { comments: { comment: userComment, commentedBy: userId } }
-          }
+          },
+          {new :true}
         )
         .populate("comments.commentedBy")
         .populate("postedBy")
         .exec((err, result) => {
           if (err) reject(err);
-          else resolve(result);
+          else {
+            console.log("resullll++++", result);
+            resolve(result);
+          }
         });
     })
 };

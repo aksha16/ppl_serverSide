@@ -39,18 +39,6 @@ router.post("/verifyuser", async (req, res) => {
   await api.verifyUser(req.body._id);
 });
 
-const verifyToken = (req, res, next) => {
-  console.log("what happended with jwt", req.headers, req.body);
-  jwt.verify(req.body.token, "secret_key", (err, authData) => {
-    if (err) {
-      console.log("err", err);
-    } else {
-      console.log("authdata", authData);
-      next();
-    }
-  });
-};
-
 router.post("/login", multer().none(), async (req, res) => {
   try {
     const obj = {};

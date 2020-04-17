@@ -12,9 +12,9 @@ router.post("/upload", upload.single("image"), async (req, res) => {
   obj.image = req.file.filename;
   obj.category = req.body.category.toLowerCase();
   console.log("obj", obj);
-  res.send(obj);
-  await api.createUpload(obj);
-  console.log("upload dbase has been created ...", __dirname);
+  const data = await api.createUpload(obj);
+  console.log("upload dbase has been created ...",data);
+  res.send(data);
 });
 
 router.post("/showpost", async (req, res) => {
@@ -42,7 +42,7 @@ router.post("/singlePost/addComments", async (req, res) => {
     let data = await api.addComments(obj._id, obj.comment, obj.commentedBy);
     console.log(
       "whats has commented returned",
-      data.comments,
+      data,
       "============================"
     );
     const sendData = {

@@ -17,7 +17,8 @@ app.use(bodyParser.json());
 
 mongoose.connect('mongodb://localhost:27017/ppldata', {
     useUnifiedTopology: true,
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useFindAndModify:false
 }, (err) => {
     if (err) {
         console.log("dbase error")
