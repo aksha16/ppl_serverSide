@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const userSchema = require("../schemas/userSchema");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const functions = {
   findByEmail: userEmail =>
@@ -14,15 +16,26 @@ const functions = {
       });
     }),
 
-  createDb: dataBody => userSchema.create(dataBody),
+  createDb: dataBody =>
+    new Promise((resolve, reject) => {
+      bcrypt.hash(dataBody.password, saltRounds, (err, hash) => {
+        dataBody.password = hash;
+        userSchema.create(dataBody, (err, result) => {
+          if (err) reject(err);
+          else {
+            console.log("result=======", result, "========");
+            resolve(result);
+          }
+        });
+      });
+    }),
 
-  logIn: (userEmail, userPassword) =>
+  logIn: (userEmail) =>
     new Promise((resolve, reject) => {
       userSchema.findOne(
         {
           $and: [
             { email: userEmail },
-            { password: userPassword },
             { isVerified: true }
           ]
         },

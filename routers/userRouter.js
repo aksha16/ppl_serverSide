@@ -5,30 +5,31 @@ const multer = require("multer");
 const sendgrid = require("@sendgrid/mail");
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 router.post("/registration", multer().none(), async (req, res) => {
   try {
     let user = await api.findByEmail(req.body.email);
-    console.log(req.body.email);
     if (user) {
       console.log("user exists...");
-      console.log("user : ", user);
       res.send(true);
     } else {
-      console.log("new user created : ", req.body);
-      const data = await api.createDb(req.body);
-      console.log("what's has come out of registration", data);
-      const obj = { _id: data._id, status: true };
-      const emailText = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><a href="http://localhost:3000/verifyuser/${data._id}">Click Here to reset the password</a></body></html>`;
-      const msg = {
-        to: req.body.email,
-        from: "aksha.ali@daffodilsw.com",
-        subject: "Reset password of PetSocial account",
-        text: "You can reset your password",
-        html: emailText
-      };
-      sendgrid.send(msg);
-      res.send(false);
+      try {
+        const data = await api.createDb(req.body);
+        console.log("what's has come out of registration", data);
+        const emailText = `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><a href="http://localhost:3000/verifyuser/${data._id}">Click Here to verify user</a></body></html>`;
+        const msg = {
+          to: req.body.email,
+          from: "aksha.ali@daffodilsw.com",
+          subject: "Verify for PetSocial account",
+          text: "You can verify your user email",
+          html: emailText
+        };
+        sendgrid.send(msg);
+        res.send(false);
+      } catch (err) {
+        console.log("errrooorr", err);
+      }
     }
   } catch (err) {
     console.log("error", err);
@@ -42,22 +43,36 @@ router.post("/verifyuser", async (req, res) => {
 router.post("/login", multer().none(), async (req, res) => {
   try {
     const obj = {};
-    let user = await api.logIn(req.body.email, req.body.password);
+    let user = await api.logIn(req.body.email);
     if (user) {
-      console.log("userrrrr++++", { ...user });
-      const userObj = { ...user }._doc;
-      userObj.status = true;
-      delete userObj.password;
-      console.log(userObj, "user can log in");
-      //jwt here
-      const payload = { userData: userObj };
-      jwt.sign({ payload }, "secret_key", (err, token) => {
-        if (err) console.log("jwt err", err);
-        else {
-          console.log("token lets see ", token, "^^", userObj);
-          res.send({ token });
+      try {
+        const passCheck = await bcrypt.compare(
+          req.body.password,
+          user.password
+        );
+        if (passCheck) {
+          const userObj = { ...user }._doc;
+          userObj.status = true;
+          delete userObj.password;
+          console.log(userObj, "user can log in");
+          //jwt here
+          const payload = { userData: userObj };
+          jwt.sign({ payload }, "secret_key", (err, token) => {
+            if (err) console.log("jwt err", err);
+            else {
+              console.log("token lets see ", token, "^^", userObj);
+              res.send({ token });
+            }
+          });
+        } else {
+          obj.status = false;
+          console.log(obj, "user can't log-in");
+
+          res.send(obj);
         }
-      });
+      } catch (err) {
+        console.log("err==", err);
+      }
     } else {
       obj.status = false;
       console.log(obj, "user can't log-in");

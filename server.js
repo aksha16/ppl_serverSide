@@ -4,7 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const routerForUser = require('./routers/userouter');
+const routerForUser = require('./routers/userRouter');
 const routerForPost = require('./routers/postRouter');
 const routerForCategory = require('./routers/categoryRouter');
 
