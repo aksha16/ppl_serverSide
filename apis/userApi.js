@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const functions = {
-  findByEmail: userEmail =>
+  findByEmail: (userEmail) =>
     new Promise((resolve, reject) => {
       userSchema.findOne({ email: userEmail }, (err, result) => {
         if (err) {
@@ -16,17 +16,20 @@ const functions = {
       });
     }),
 
-  createDb: dataBody =>
+  createDb: (dataBody) =>
     new Promise((resolve, reject) => {
       bcrypt.hash(dataBody.password, saltRounds, (err, hash) => {
-        dataBody.password = hash;
-        userSchema.create(dataBody, (err, result) => {
-          if (err) reject(err);
-          else {
-            console.log("result=======", result, "========");
-            resolve(result);
-          }
-        });
+        if (err) reject(err);
+        else {
+          dataBody.password = hash;
+          userSchema.create(dataBody, (err, result) => {
+            if (err) reject(err);
+            else {
+              console.log("result=======", result, "========");
+              resolve(result);
+            }
+          });
+        }
       });
     }),
 
@@ -34,10 +37,7 @@ const functions = {
     new Promise((resolve, reject) => {
       userSchema.findOne(
         {
-          $and: [
-            { email: userEmail },
-            { isVerified: true }
-          ]
+          $and: [{ email: userEmail }, { isVerified: true }],
         },
         (err, result) => {
           if (err) reject(err);
@@ -49,7 +49,7 @@ const functions = {
       );
     }),
 
-  forgetPassword: userEmail =>
+  forgetPassword: (userEmail) =>
     new Promise((resolve, reject) => {
       userSchema.findOne({ email: userEmail }, (err, result) => {
         if (err) reject(err);
@@ -59,17 +59,20 @@ const functions = {
 
   resetPassword: (userId, userNewPassword) =>
     new Promise((resolve, reject) => {
-      userSchema.updateOne(
-        { _id: userId },
-        { $set: { password: userNewPassword } },
-        (err, result) => {
-          if (err) reject(err);
-          else resolve(result);
-        }
-      );
+      bcrypt.hash(userNewPassword, saltRounds, (err, hash) => {
+        userNewPassword = hash;
+        userSchema.updateOne(
+          { _id: userId },
+          { $set: { password: userNewPassword } },
+          (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+          }
+        );
+      });
     }),
 
-  verifyUser: userId =>
+  verifyUser: (userId) =>
     new Promise((resolve, reject) => {
       userSchema.updateOne(
         { _id: userId },
@@ -79,7 +82,7 @@ const functions = {
           else resolve(result);
         }
       );
-    })
+    }),
 };
 
 module.exports = functions;
