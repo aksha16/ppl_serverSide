@@ -26,6 +26,8 @@ mongoose.connect('mongodb://localhost:27017/ppldata', {
     else console.log("dbase Connected ! ")
 });
 
+app.use(express.static('public'));
+
 app.use('/user', routerForUser);
 app.use('/post', routerForPost);
 app.use('/category', routerForCategory);
