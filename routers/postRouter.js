@@ -4,17 +4,18 @@ const api = require("../apis/postApi");
 const multer = require("multer");
 
 const upload = multer({
-  dest: "/home/com122/Desktop/ppl/clientSide" + "/public/uploadPics"
+  dest: "/home/com122/Desktop/ppl/backend" + "/public/uploadPics"
 });
 
 router.post("/upload", upload.single("image"), async (req, res) => {
   let obj = req.body;
-  obj.image = req.file.filename;
-  obj.category = req.body.category.toLowerCase();
-  console.log("obj", obj);
-  const data = await api.createUpload(obj);
-  console.log("upload dbase has been created ...",data);
-  res.send(data);
+  console.log("image of react native", req.files, req.file, req.body);
+  // obj.image = req.file.filename;
+  // // obj.category = req.body.category.toLowerCase();
+  // // console.log("obj", obj);
+  // // const data = await api.createUpload(obj);
+  // // console.log("upload dbase has been created ...",data);
+  // // res.send(data);
 });
 
 router.post("/showpost", async (req, res) => {

@@ -9,6 +9,7 @@ const functions = {
       postSchema
         .find({})
         .sort({ _id: -1 })
+        .populate("comments.commentedBy")
         .populate("postedBy")
         .exec((err, result) => {
           if (err) {
