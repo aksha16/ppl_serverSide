@@ -33,6 +33,7 @@ router.post("/likes", async (req, res) => {
 router.post("/singlePost", async (req, res) => {
   console.log("let's check single post data ", req.body);
   let data = await api.showSinglePost(req.body.id);
+  console.log("what data", data);
   res.send(data);
 });
 
