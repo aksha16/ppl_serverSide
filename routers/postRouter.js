@@ -7,15 +7,15 @@ const upload = multer({
   dest: "/home/com122/Desktop/ppl/backend" + "/public/uploadPics"
 });
 
-router.post("/upload", upload.single("image"), async (req, res) => {
+router.post("/upload", upload.array("image", 3), async (req, res) => {
   let obj = req.body;
-  console.log("image of react native", req.files, req.file, req.body);
-  // obj.image = req.file.filename;
-  // // obj.category = req.body.category.toLowerCase();
-  // // console.log("obj", obj);
-  // // const data = await api.createUpload(obj);
-  // // console.log("upload dbase has been created ...",data);
-  // // res.send(data);
+  console.log("image of react native", obj, req.files);
+  obj.image = req.files[0].filename;
+  obj.category = req.body.category.toLowerCase();
+  console.log("obj", obj);
+  const data = await api.createUpload(obj);
+  console.log("upload dbase has been created ...",data);
+  res.status(200).send("data");
 });
 
 router.post("/showpost", async (req, res) => {
@@ -56,5 +56,38 @@ router.post("/singlePost/addComments", async (req, res) => {
     console.log("errrrrr", err);
   }
 });
+
+router.post("/sort", async(req, res) => {
+  try {
+    console.log(req.body, "sort request");
+    let text = req.body.text;
+    if (text == 'latestFirst') {
+      data = await api.latestFirst(req.body.limit);
+    } else if (text == 'oldestFirst') {
+      data = await api.oldestFirst(req.body.limit);
+    } else if (text == 'mostLiked') {
+      data = await api.mostLiked(req.body.limit);
+    } else if (text == 'mostCommented') {
+      data = await api.mostCommented(req.body.limit);
+    }
+    res.send(data);
+  } catch(err) {
+    console.log("errrrr", err);
+    res.send(false);
+  }
+})
+
+router.post("/myupload", async(req, res) => {
+  try{
+    const data = await api.myUploads(req.body);
+    res.send(data);
+  } catch(err) {
+    console.log("errrr", err);
+    res.send(false);
+  }
+})
+
+
+
 
 module.exports = router;

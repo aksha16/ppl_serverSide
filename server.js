@@ -11,7 +11,7 @@ const routerForCategory = require('./routers/categoryRouter');
 // passport and cookie-session has been installed !
 
 const port = 3002;
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
 
