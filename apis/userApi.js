@@ -4,9 +4,9 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const functions = {
-  findByEmail: (userEmail) =>
+  findByEmail: (userEmail, userName) =>
     new Promise((resolve, reject) => {
-      userSchema.findOne({ email: userEmail }, (err, result) => {
+      userSchema.findOne({ email: userEmail, username:userName }, (err, result) => {
         if (err) {
           reject(err);
         } else {
@@ -83,6 +83,27 @@ const functions = {
         }
       );
     }),
+
+  // allUsernames: () => {
+  //   new Promise((resolve, reject) => {
+  //     userSchema.find({}, (err,  result) => {
+  //       if(err) reject(err)
+  //       else {
+  //         console.log("result", result);
+  //         resolve(result);
+  //       }
+  //     })
+  //   })
+  // },
+
+
+  allUsernames: () =>
+  new Promise((resolve, reject) => {
+    userSchema.find({isVerified: true}, (err, result) => {
+      if (err) reject(err);
+      else resolve(result);
+    });
+  }),
 };
 
 module.exports = functions;

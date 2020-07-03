@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 
 router.post("/registration", multer().none(), async (req, res) => {
   try {
-    let user = await api.findByEmail(req.body.email);
+    let user = await api.findByEmail(req.body.email, req.body.username);
     if (user) {
       console.log("user exists...");
       res.send(true);
@@ -122,5 +122,17 @@ router.post("/resetpassword", async (req, res) => {
   const data = await api.resetPassword(req.body._id, req.body.password);
   res.send(data);
 });
+
+// router.post("/usernames", async(req, res)  => {
+//   const  data =  await api.allUsernames();
+// })
+
+
+router.post("/usernames", async(req,  res) => {
+  const data = await api.allUsernames();
+  console.log("data of username",  data);
+  res.send(data);
+
+})
 
 module.exports = router;
