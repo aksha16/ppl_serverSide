@@ -77,9 +77,10 @@ router.post("/sort", async(req, res) => {
   }
 })
 
-router.post("/myupload", async(req, res) => {
+router.post("/myuploads", async(req, res) => {
   try{
-    const data = await api.myUploads(req.body);
+    console.log(req.body, "id of user uploads",req.body.user.userData._id);
+    const data = await api.myUploads(req.body.user.userData._id);
     res.send(data);
   } catch(err) {
     console.log("errrr", err);

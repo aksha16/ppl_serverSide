@@ -225,7 +225,7 @@ const functions = {
 
     myUploads: (id) => new Promise((resolve, reject) => {
       postSchema
-        .find({_id:id})
+        .find({postedBy:id})
         .sort({ _id: -1 })
         .populate("comments.commentedBy")
         .populate("postedBy")
@@ -233,6 +233,7 @@ const functions = {
           if (err) {
             reject(err);
           } else {
+            console.log("result of my uploads",  result);
             resolve(result);
           }
         });
